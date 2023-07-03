@@ -59,7 +59,7 @@ class ProductController extends AbstractController
 
 
         return $this->json([
-            'message' => 'Patalago created successfully',
+            'message' => 'Product created successfully',
             'data' => $product
         ], 201);
     }
