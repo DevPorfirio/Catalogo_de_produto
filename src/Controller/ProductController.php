@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\ProductRepository;
 use App\Entity\Product;
+use Doctrine\Persistence\ManagerRegistry;
 
 class ProductController extends AbstractController
 {
@@ -58,7 +59,34 @@ class ProductController extends AbstractController
 
 
         return $this->json([
-            'message' => 'Catalago created successfully',
+            'message' => 'Patalago created successfully',
+            'data' => $product
+        ], 201);
+    }
+
+    #[Route('/products/{product}', name: 'products_update', methods: ['PUT', 'PATCH'])] 
+    public function update(int $product, Request $request, ManagerRegistry $doctrine, ProductRepository $ProductRepository): JsonResponse
+    {   
+        $product = $ProductRepository->find($product);
+
+        if(!$product) throw $this->createNotFoundException();
+
+        $data = $request->request->all();
+
+        $product->setCode($data['code']);
+        $product->setName($data['name']);
+        $product->setPrice($data['price']);
+        $product->setPricePromotion($data['pricePromotion']);
+        $product->setTax($data['tax']);
+        $product->setPromotion($data['promotion']);
+        $product->setActive($data['active']);
+        $product->setUpdatedAt(new \DateTimeImmutable('now', new \DateTimeZone('America/Sao_Paulo')));
+
+        $doctrine->getManager()->flush();
+
+
+        return $this->json([
+            'message' => 'Product updated successfully',
             'data' => $product
         ], 201);
     }
