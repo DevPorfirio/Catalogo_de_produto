@@ -19,6 +19,18 @@ class ProductController extends AbstractController
         ]);
     }
 
+    #[Route('/products/{product}', name: 'product_single', methods: ['GET'])]
+    public function single(int $product, ProductRepository $ProductRepository): JsonResponse
+    {
+        $product = $ProductRepository->find($product);
+
+        if(!$product) throw $this->createNotFoundException();
+
+        return $this->json([
+            'data' => $product
+        ]);
+    }
+
     #[Route('/products', name: 'product_create', methods: ['POST'])]
     public function create(Request $request, ProductRepository $ProductRepository): JsonResponse
     {   
