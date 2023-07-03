@@ -64,7 +64,7 @@ class ProductController extends AbstractController
         ], 201);
     }
 
-    #[Route('/products/{product}', name: 'products_update', methods: ['PUT', 'PATCH'])] 
+    #[Route('/products/{product}', name: 'product_update', methods: ['PUT', 'PATCH'])] 
     public function update(int $product, Request $request, ManagerRegistry $doctrine, ProductRepository $ProductRepository): JsonResponse
     {   
         $product = $ProductRepository->find($product);
@@ -87,6 +87,21 @@ class ProductController extends AbstractController
 
         return $this->json([
             'message' => 'Product updated successfully',
+            'data' => $product
+        ], 201);
+    }
+
+    #[Route('/products/{product}', name: 'product_remove', methods: ['DELETE'])]
+    public function remove(int $product, Request $request, ProductRepository $ProductRepository): JsonResponse
+    {   
+        $product = $ProductRepository->find($product);
+
+        if(!$product) throw $this->createNotFoundException();
+
+        $ProductRepository->remove($product, true);
+
+        return $this->json([
+            'message' => 'Product removed successfully',
             'data' => $product
         ], 201);
     }
